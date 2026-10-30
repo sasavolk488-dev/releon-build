@@ -11,14 +11,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Unzip
+      - name: Unzip Source Code
         run: |
           mkdir -p unpacked
-          # Эта команда сама найдет любой zip-файл в папке
           ZIP_FILE=$(find . -maxdepth 1 -name "*.zip" | head -n 1)
-          echo "Найден архив: $ZIP_FILE"
           unzip -o "$ZIP_FILE" -d unpacked
           ls -la unpacked
+
+      - name: Download Assets from Release
+        run: |
+          # Скачиваем assets.zip, который ты залил в Releases
+          wget -O assets.zip "https://github.com/sasavolk488-dev/releon-build/releases/download/v1/assets.zip"
+          
+          # Находим папку resources и распаковываем туда текстуры
+          RES_DIR=$(find unpacked -type d -path "*/src/main/resources" | head -1)
+          unzip -o assets.zip -d "$RES_DIR"
+          echo "Текстуры распакованы в $RES_DIR"
 
       - uses: actions/setup-java@v4
         with:
