@@ -14,8 +14,10 @@ jobs:
       - name: Unzip
         run: |
           mkdir -p unpacked
-          # ВАЖНО: Если твой ZIP называется иначе (например с (1) или пробелом), поменяй имя в кавычках ниже!
-          unzip -o "releon1.21.11-src.zip" -d unpacked
+          # Эта команда сама найдет любой zip-файл в папке
+          ZIP_FILE=$(find . -maxdepth 1 -name "*.zip" | head -n 1)
+          echo "Найден архив: $ZIP_FILE"
+          unzip -o "$ZIP_FILE" -d unpacked
           ls -la unpacked
 
       - uses: actions/setup-java@v4
