@@ -20,10 +20,9 @@ jobs:
 
       - name: Download Assets from Release
         run: |
-          # Скачиваем assets.zip, который ты залил в Releases
-          wget -O assets.zip "https://github.com/sasavolk488-dev/releon-build/releases/download/v1/assets.zip"
+          # ВАЖНО: Замени кавычки ниже на ссылку, которую ты скопировал!
+          wget -O assets.zip "ВСТАВЬ_СВОЮ_ССЫЛКУ"
           
-          # Находим папку resources и распаковываем туда текстуры
           RES_DIR=$(find unpacked -type d -path "*/src/main/resources" | head -1)
           unzip -o assets.zip -d "$RES_DIR"
           echo "Текстуры распакованы в $RES_DIR"
