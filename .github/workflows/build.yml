@@ -1,0 +1,40 @@
+name: Build Releon
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unzip
+        run: |
+          mkdir -p unpacked
+          # ВАЖНО: Если твой ZIP называется иначе (например с (1) или пробелом), поменяй имя в кавычках ниже!
+          unzip -o "releon1.21.11-src.zip" -d unpacked
+          ls -la unpacked
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: |
+          cd unpacked
+          DIR=$(find . -name "build.gradle" -not -path "*/build/*" -not -path "*/.gradle/*" | head -1 | xargs dirname)
+          cd "$DIR"
+          sed -i '/org.gradle.java.home/d' gradle.properties || true
+          gradle build --no-daemon
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: releon-jar
+          path: 'unpacked/**/build/libs/*.jar'
